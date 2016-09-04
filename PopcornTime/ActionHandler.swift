@@ -19,7 +19,7 @@ struct ActionHandler { // swiftlint:disable:this type_body_length
         case "showMovies":
             var genre = Genre()
             genre.fetchType = .Movies
-            Kitchen.serve(recipe: KitchenTabBar(items: [Browse(), Popular(), Latest(), genre, Watchlist(), Search()]))
+            Kitchen.serve(recipe: KitchenTabBar(items: [Discover(), Popular(), Latest(), genre, Watchlist(), Search()]))
         case "chooseKickassCategory":
             var buttons = [AlertButton]()
             buttons.append(AlertButton(title: "Movies", actionID: "showKickassSearch»movies"))
@@ -29,9 +29,6 @@ struct ActionHandler { // swiftlint:disable:this type_body_length
              let kickassSearchRecipe = KATSearchRecipe(type: .Search, category: pieces[1])
              Kitchen.serve(recipe: kickassSearchRecipe)
         case "showTVShows":
-            var browse = Browse()
-            browse.fetchType = .Shows
-            
             var latest = Latest()
             latest.fetchType = .Shows
 

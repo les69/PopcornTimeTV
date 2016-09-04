@@ -29,9 +29,9 @@
 		287B853F1C9873A200EEF5C8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 287B853E1C9873A200EEF5C8 /* Assets.xcassets */; };
 		287B85471C98771300EEF5C8 /* ActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 287B85461C98771300EEF5C8 /* ActionHandler.swift */; };
 		28EB626C1CA3364300985F78 /* String+Cleaned.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28EB626B1CA3364300985F78 /* String+Cleaned.swift */; };
-		4091A4161D7C6B3C004B9B45 /* Browse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4091A4151D7C6B3C004B9B45 /* Browse.swift */; };
-		4091A4181D7C6BC6004B9B45 /* BrowseRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4091A4171D7C6BC6004B9B45 /* BrowseRecipe.swift */; };
-		4091A41B1D7C6C20004B9B45 /* Browse.xml in Resources */ = {isa = PBXBuildFile; fileRef = 4091A41A1D7C6C20004B9B45 /* Browse.xml */; };
+		4091A4161D7C6B3C004B9B45 /* Discover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4091A4151D7C6B3C004B9B45 /* Discover.swift */; };
+		4091A4181D7C6BC6004B9B45 /* DiscoverRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4091A4171D7C6BC6004B9B45 /* DiscoverRecipe.swift */; };
+		4091A41B1D7C6C20004B9B45 /* Discover.xml in Resources */ = {isa = PBXBuildFile; fileRef = 4091A41A1D7C6C20004B9B45 /* Discover.xml */; };
 		40CD02871D295C4800995E48 /* Movie+Parallax.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40CD02861D295C4800995E48 /* Movie+Parallax.swift */; };
 		9205508D1CE6F71E00B8623F /* SRTParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 9205508A1CE6F71E00B8623F /* SRTParser.m */; };
 		9205508E1CE6F71E00B8623F /* SRTSubtitle.m in Sources */ = {isa = PBXBuildFile; fileRef = 9205508C1CE6F71E00B8623F /* SRTSubtitle.m */; };
@@ -160,9 +160,9 @@
 		287B85461C98771300EEF5C8 /* ActionHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionHandler.swift; sourceTree = "<group>"; };
 		28EB626B1CA3364300985F78 /* String+Cleaned.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "String+Cleaned.swift"; path = "Extensions/String+Cleaned.swift"; sourceTree = "<group>"; };
 		3E2A1684A64499B8ED0B31B3 /* Pods-TopShelf.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TopShelf.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TopShelf/Pods-TopShelf.debug.xcconfig"; sourceTree = "<group>"; };
-		4091A4151D7C6B3C004B9B45 /* Browse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Browse.swift; sourceTree = "<group>"; };
-		4091A4171D7C6BC6004B9B45 /* BrowseRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrowseRecipe.swift; sourceTree = "<group>"; };
-		4091A41A1D7C6C20004B9B45 /* Browse.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Browse.xml; sourceTree = "<group>"; };
+		4091A4151D7C6B3C004B9B45 /* Discover.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Discover.swift; sourceTree = "<group>"; };
+		4091A4171D7C6BC6004B9B45 /* DiscoverRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverRecipe.swift; sourceTree = "<group>"; };
+		4091A41A1D7C6C20004B9B45 /* Discover.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Discover.xml; sourceTree = "<group>"; };
 		40CD02861D295C4800995E48 /* Movie+Parallax.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Movie+Parallax.swift"; path = "Extensions/Movie+Parallax.swift"; sourceTree = "<group>"; };
 		59BE8A67A9D4954F63D16C0E /* Pods-PopcornTime.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PopcornTime.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PopcornTime/Pods-PopcornTime.debug.xcconfig"; sourceTree = "<group>"; };
 		796C61914EF57FAF09B30DFE /* Pods-PopcornTime.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PopcornTime.release.xcconfig"; path = "Pods/Target Support Files/Pods-PopcornTime/Pods-PopcornTime.release.xcconfig"; sourceTree = "<group>"; };
@@ -310,7 +310,7 @@
 			isa = PBXGroup;
 			children = (
 				925F8DF61CA9E477007100EB /* Watchlist.swift */,
-				4091A4151D7C6B3C004B9B45 /* Browse.swift */,
+				4091A4151D7C6B3C004B9B45 /* Discover.swift */,
 				923860561CA0E40500A21F3B /* Latest.swift */,
 				280910311C99DFDA00C8EC1C /* Popular.swift */,
 				280910331C99E0E000C8EC1C /* Search.swift */,
@@ -396,13 +396,13 @@
 			name = Extensions;
 			sourceTree = "<group>";
 		};
-		4091A4191D7C6BCB004B9B45 /* Browse */ = {
+		4091A4191D7C6BCB004B9B45 /* Discover */ = {
 			isa = PBXGroup;
 			children = (
-				4091A4171D7C6BC6004B9B45 /* BrowseRecipe.swift */,
-				4091A41A1D7C6C20004B9B45 /* Browse.xml */,
+				4091A4171D7C6BC6004B9B45 /* DiscoverRecipe.swift */,
+				4091A41A1D7C6C20004B9B45 /* Discover.xml */,
 			);
-			name = Browse;
+			name = Discover;
 			sourceTree = "<group>";
 		};
 		920550871CE6F71E00B8623F /* Objective-C */ = {
@@ -527,7 +527,7 @@
 			children = (
 				924214031CB19DD10055FA15 /* Welcome */,
 				924213FF1CB19DB40055FA15 /* Catalog */,
-				4091A4191D7C6BCB004B9B45 /* Browse */,
+				4091A4191D7C6BCB004B9B45 /* Discover */,
 				924213FE1CB19DAA0055FA15 /* Product */,
 				924214021CB19DCA0055FA15 /* Search */,
 				924214011CB19DC20055FA15 /* WatchList */,
@@ -728,7 +728,7 @@
 			files = (
 				9211E3F01CDC0A8C00BEEB9D /* SYVLCPlayerViewController.xib in Resources */,
 				280910381C99E6CA00C8EC1C /* Loading.xml in Resources */,
-				4091A41B1D7C6C20004B9B45 /* Browse.xml in Resources */,
+				4091A41B1D7C6C20004B9B45 /* Discover.xml in Resources */,
 				92D0A7DA1CE28EE900B3279B /* WatchlistRecipe.xml in Resources */,
 				00C28EA61CE1DB2E00E4D8BF /* Genre.js in Resources */,
 				D94F191D1D12065C00245177 /* KATSearchRecipe.xml in Resources */,
@@ -890,7 +890,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				92CF4A031CE6692100D666A8 /* ZKCDTrailer64Locator.m in Sources */,
-				4091A4181D7C6BC6004B9B45 /* BrowseRecipe.swift in Sources */,
+				4091A4181D7C6BC6004B9B45 /* DiscoverRecipe.swift in Sources */,
 				92CF49FD1CE6692100D666A8 /* NSString+ZKAdditions.m in Sources */,
 				280910321C99DFDA00C8EC1C /* Popular.swift in Sources */,
 				92CF49FC1CE6692100D666A8 /* NSFileManager+ZKAdditions.m in Sources */,
@@ -939,7 +939,7 @@
 				92CF49341CE6591A00D666A8 /* SubtitleManager.swift in Sources */,
 				92190C7C1CF78AA60060BE73 /* FileHash.swift in Sources */,
 				925F8DF81CA9E477007100EB /* Watchlist.swift in Sources */,
-				4091A4161D7C6B3C004B9B45 /* Browse.swift in Sources */,
+				4091A4161D7C6B3C004B9B45 /* Discover.swift in Sources */,
 				92CF49FF1CE6692100D666A8 /* ZKArchive.m in Sources */,
 				40CD02871D295C4800995E48 /* Movie+Parallax.swift in Sources */,
 				92D0A7DC1CE28EF300B3279B /* WatchlistRecipe.swift in Sources */,

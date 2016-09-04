@@ -3,7 +3,7 @@
 import TVMLKitchen
 import PopcornKit
 
-public class BrowseRecipe: RecipeType {
+public class DiscoverRecipe: RecipeType {
     private var currentPage = 1
     public var minimumRating = 0
     public var sortBy = "date_added"

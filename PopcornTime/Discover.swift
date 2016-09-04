@@ -3,15 +3,15 @@
 import TVMLKitchen
 import PopcornKit
 
-struct Browse: TabItem {
+struct Discover: TabItem {
 
-    var title = "Discover New Movies"
+    var title = "Discover"
     var fetchType: FetchType! = .Movies {
         didSet {
             if let _ = self.fetchType {
                 switch self.fetchType! {
-                case .Movies: title = "Discover New Movies"
-                case .Shows: title = "Discover New TV Shows"
+                case .Movies: title = "Discover"
+                case .Shows: title = "Discover"
 
                 }
             }
@@ -23,7 +23,7 @@ struct Browse: TabItem {
         case .Movies:
             NetworkManager.sharedManager().fetchMovies(limit: 50, page: 1, quality: "1080p", minimumRating: 0, queryTerm: nil, genre: nil, sortBy: "year", orderBy: "desc") { movies, error in
                 if let movies = movies {
-                    let recipe = BrowseRecipe(title: "Browse :)", movies: movies)
+                    let recipe = DiscoverRecipe(title: "Discover New Movies", movies: movies)
                     self.serveRecipe(recipe)
                 }
             }
@@ -35,7 +35,7 @@ struct Browse: TabItem {
                     // this is temporary limit until solve pagination
                     manager.fetchShows([1], sort: "updated") { shows, error in
                         if let shows = shows {
-                            let recipe = BrowseRecipe(title: "Recently Released", shows: shows.sort({ show1, show2 -> Bool in
+                            let recipe = DiscoverRecipe(title: "Discover New TV Shows", shows: shows.sort({ show1, show2 -> Bool in
                                 if let date1 = show1.lastUpdated, let date2 = show2.lastUpdated {
                                     return date1 < date2
                                 }
@@ -51,7 +51,7 @@ struct Browse: TabItem {
         }
     }
     
-    func serveRecipe(recipe: BrowseRecipe) {
+    func serveRecipe(recipe: DiscoverRecipe) {
         Kitchen.appController.evaluateInJavaScriptContext({jsContext in
             let highlightLockup: @convention(block) (Int, JSValue) -> () = {(nextPage, callback) in
                 recipe.highlightLockup(nextPage) { string in
