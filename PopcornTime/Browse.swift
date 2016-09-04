@@ -4,8 +4,19 @@ import TVMLKitchen
 import PopcornKit
 
 struct Browse: TabItem {
-    
-    var fetchType: FetchType! = .Movies
+
+    var title = "Discover New Movies"
+    var fetchType: FetchType! = .Movies {
+        didSet {
+            if let _ = self.fetchType {
+                switch self.fetchType! {
+                case .Movies: title = "Discover New Movies"
+                case .Shows: title = "Discover New TV Shows"
+
+                }
+            }
+        }
+    }
     
     func handler() {
         switch self.fetchType! {
