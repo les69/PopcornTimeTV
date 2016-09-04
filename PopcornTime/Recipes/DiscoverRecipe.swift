@@ -31,6 +31,13 @@ public class DiscoverRecipe: RecipeType {
         return xml
     }
     
+    public var carousel: String {
+        let mapped: [String] = Movie.map {
+            return $0.carousel
+        }
+        return mapped.joinWithSeparator("\n")
+    }
+    
     public var creditsString: String {
         var mapped = [[String]]()
         
@@ -58,11 +65,12 @@ public class DiscoverRecipe: RecipeType {
     
     public var template: String {
         var xml = ""
-        if let file = NSBundle.mainBundle().URLForResource("BrowseRecipe", withExtension: "xml") {
+        if let file = NSBundle.mainBundle().URLForResource("Discover", withExtension: "xml") {
             do {
                 xml = try String(contentsOfURL: file)
                 xml = xml.stringByReplacingOccurrencesOfString("{{TITLE}}", withString: title)
                 xml = xml.stringByReplacingOccurrencesOfString("{{SHELFS}}", withString: creditsString)
+                xml = xml.stringByReplacingOccurrencesOfString("{{CAROUSEL}}", withString: carousel)
             } catch {
                 print("Could not open Catalog template")
             }

@@ -14,9 +14,18 @@
         <img src="http://i.cubeupload.com/ztwjsD.png"></img>
     </background>
     <banner>
-        <title>Carousel Here</title>
+        <title>{{TITLE}}</title>
     </banner>
     <collectionList>
-        {{SHELFS}}
+        <carousel>
+            <section>
+                {{CAROUSEL}}
+            </section>
+        </carousel>
+        <shelf>
+            <section>
+                {{SHELFS}}
+            </section>
+        </shelf>
     </collectionList>
 </stackTemplate>

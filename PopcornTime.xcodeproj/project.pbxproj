@@ -83,7 +83,7 @@
 		92CF4A0A1CE6692900D666A8 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 92CF4A091CE6692900D666A8 /* libz.tbd */; };
 		92D0A7DA1CE28EE900B3279B /* WatchlistRecipe.xml in Resources */ = {isa = PBXBuildFile; fileRef = 92D0A7D91CE28EE900B3279B /* WatchlistRecipe.xml */; };
 		92D0A7DC1CE28EF300B3279B /* WatchlistRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D0A7DB1CE28EF300B3279B /* WatchlistRecipe.swift */; };
-		92DF99D11CA6FB0800D6944C /* Welcome+Carousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92DF99D01CA6FB0800D6944C /* Welcome+Carousel.swift */; };
+		92DF99D11CA6FB0800D6944C /* Discover+Tab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92DF99D01CA6FB0800D6944C /* Discover+Tab.swift */; };
 		CDBF82134E6AA2D3AFAC0C2C /* Pods_TopShelf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B747D9446AC930A21B6E6E3D /* Pods_TopShelf.framework */; };
 		D94F191D1D12065C00245177 /* KATSearchRecipe.xml in Resources */ = {isa = PBXBuildFile; fileRef = D94F191C1D12065C00245177 /* KATSearchRecipe.xml */; };
 		D99067F41D6A0775006DFDEB /* encodingTypes.plist in Resources */ = {isa = PBXBuildFile; fileRef = D99067F31D6A0775006DFDEB /* encodingTypes.plist */; };
@@ -240,7 +240,7 @@
 		92CF4A091CE6692900D666A8 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		92D0A7D91CE28EE900B3279B /* WatchlistRecipe.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = WatchlistRecipe.xml; sourceTree = "<group>"; };
 		92D0A7DB1CE28EF300B3279B /* WatchlistRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WatchlistRecipe.swift; sourceTree = "<group>"; };
-		92DF99D01CA6FB0800D6944C /* Welcome+Carousel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Welcome+Carousel.swift"; path = "Extensions/Welcome+Carousel.swift"; sourceTree = "<group>"; };
+		92DF99D01CA6FB0800D6944C /* Discover+Tab.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Discover+Tab.swift"; path = "Extensions/Discover+Tab.swift"; sourceTree = "<group>"; };
 		B747D9446AC930A21B6E6E3D /* Pods_TopShelf.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TopShelf.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7DC191EE356BC3B5A5E8F16 /* Pods_PopcornTime.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PopcornTime.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D94F191C1D12065C00245177 /* KATSearchRecipe.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = KATSearchRecipe.xml; sourceTree = "<group>"; };
@@ -383,7 +383,7 @@
 		28EB626A1CA3362B00985F78 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				92DF99D01CA6FB0800D6944C /* Welcome+Carousel.swift */,
+				92DF99D01CA6FB0800D6944C /* Discover+Tab.swift */,
 				D9E239BA1D69F86400FF8FC7 /* UIAlertAction+Subtitles.swift */,
 				28EB626B1CA3364300985F78 /* String+Cleaned.swift */,
 				00987D411CDB6B9C005AFB22 /* Show+Lockup.swift */,
@@ -907,7 +907,7 @@
 				923860571CA0E40500A21F3B /* Latest.swift in Sources */,
 				92CF4A071CE6692100D666A8 /* ZKLFHeader.m in Sources */,
 				00FD28B71CE0CB3A00D29EA8 /* Genre.swift in Sources */,
-				92DF99D11CA6FB0800D6944C /* Welcome+Carousel.swift in Sources */,
+				92DF99D11CA6FB0800D6944C /* Discover+Tab.swift in Sources */,
 				92CF49361CE666EC00D666A8 /* String+PathComponents.swift in Sources */,
 				92CF4A041CE6692100D666A8 /* ZKDataArchive.m in Sources */,
 				D9C3D2241D4196340054BD9A /* VLCSiriRemoteGestureRecognizer.m in Sources */,
