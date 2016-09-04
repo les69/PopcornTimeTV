@@ -31,7 +31,7 @@
 		28EB626C1CA3364300985F78 /* String+Cleaned.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28EB626B1CA3364300985F78 /* String+Cleaned.swift */; };
 		4091A4161D7C6B3C004B9B45 /* Discover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4091A4151D7C6B3C004B9B45 /* Discover.swift */; };
 		4091A4181D7C6BC6004B9B45 /* DiscoverRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4091A4171D7C6BC6004B9B45 /* DiscoverRecipe.swift */; };
-		4091A41B1D7C6C20004B9B45 /* Discover.xml in Resources */ = {isa = PBXBuildFile; fileRef = 4091A41A1D7C6C20004B9B45 /* Discover.xml */; };
+		4091A41B1D7C6C20004B9B45 /* DiscoverRecipe.xml in Resources */ = {isa = PBXBuildFile; fileRef = 4091A41A1D7C6C20004B9B45 /* DiscoverRecipe.xml */; };
 		40CD02871D295C4800995E48 /* Movie+Parallax.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40CD02861D295C4800995E48 /* Movie+Parallax.swift */; };
 		9205508D1CE6F71E00B8623F /* SRTParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 9205508A1CE6F71E00B8623F /* SRTParser.m */; };
 		9205508E1CE6F71E00B8623F /* SRTSubtitle.m in Sources */ = {isa = PBXBuildFile; fileRef = 9205508C1CE6F71E00B8623F /* SRTSubtitle.m */; };
@@ -162,7 +162,7 @@
 		3E2A1684A64499B8ED0B31B3 /* Pods-TopShelf.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TopShelf.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TopShelf/Pods-TopShelf.debug.xcconfig"; sourceTree = "<group>"; };
 		4091A4151D7C6B3C004B9B45 /* Discover.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Discover.swift; sourceTree = "<group>"; };
 		4091A4171D7C6BC6004B9B45 /* DiscoverRecipe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiscoverRecipe.swift; sourceTree = "<group>"; };
-		4091A41A1D7C6C20004B9B45 /* Discover.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Discover.xml; sourceTree = "<group>"; };
+		4091A41A1D7C6C20004B9B45 /* DiscoverRecipe.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = DiscoverRecipe.xml; sourceTree = "<group>"; };
 		40CD02861D295C4800995E48 /* Movie+Parallax.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Movie+Parallax.swift"; path = "Extensions/Movie+Parallax.swift"; sourceTree = "<group>"; };
 		59BE8A67A9D4954F63D16C0E /* Pods-PopcornTime.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PopcornTime.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PopcornTime/Pods-PopcornTime.debug.xcconfig"; sourceTree = "<group>"; };
 		796C61914EF57FAF09B30DFE /* Pods-PopcornTime.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PopcornTime.release.xcconfig"; path = "Pods/Target Support Files/Pods-PopcornTime/Pods-PopcornTime.release.xcconfig"; sourceTree = "<group>"; };
@@ -400,7 +400,7 @@
 			isa = PBXGroup;
 			children = (
 				4091A4171D7C6BC6004B9B45 /* DiscoverRecipe.swift */,
-				4091A41A1D7C6C20004B9B45 /* Discover.xml */,
+				4091A41A1D7C6C20004B9B45 /* DiscoverRecipe.xml */,
 			);
 			name = Discover;
 			sourceTree = "<group>";
@@ -728,7 +728,7 @@
 			files = (
 				9211E3F01CDC0A8C00BEEB9D /* SYVLCPlayerViewController.xib in Resources */,
 				280910381C99E6CA00C8EC1C /* Loading.xml in Resources */,
-				4091A41B1D7C6C20004B9B45 /* Discover.xml in Resources */,
+				4091A41B1D7C6C20004B9B45 /* DiscoverRecipe.xml in Resources */,
 				92D0A7DA1CE28EE900B3279B /* WatchlistRecipe.xml in Resources */,
 				00C28EA61CE1DB2E00E4D8BF /* Genre.js in Resources */,
 				D94F191D1D12065C00245177 /* KATSearchRecipe.xml in Resources */,

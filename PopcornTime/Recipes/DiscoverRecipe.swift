@@ -31,46 +31,36 @@ public class DiscoverRecipe: RecipeType {
         return xml
     }
     
-    public var carousel: String {
-        let mapped: [String] = Movie.map {
-            return $0.carousel
+    public var popularMovies: String {
+        let mapped: [String] = movies.map {
+            return $0.lockUp
         }
         return mapped.joinWithSeparator("\n")
     }
+
     
-    public var creditsString: String {
-        var mapped = [[String]]()
-        
-        if movies != nil {
-            mapped += movies.map {
-                [$0.lockUp, String($0.year)]
-            }
-        }
-        if shows != nil {
-            mapped += shows.map {
-                [$0.lockUp, String($0.year)]
-            }
-        }
-        
-        mapped.sortInPlace {
-            return $0[1] > $1[1]
-        }
-        
-        let mappedItems: [String] = mapped.map {
-            $0[0]
-        }
-        
-        return mappedItems.joinWithSeparator("")
+    func buildShelf(title: String, content: String) -> String {
+        var shelf = "<shelf><header><title>"
+        shelf += title
+        shelf += "</title></header><section>"
+        shelf += content
+        shelf += "</section></shelf>"
+        return shelf
     }
     
     public var template: String {
         var xml = ""
-        if let file = NSBundle.mainBundle().URLForResource("Discover", withExtension: "xml") {
+        var shelfs = ""
+        if let file = NSBundle.mainBundle().URLForResource("DiscoverRecipe", withExtension: "xml") {
             do {
                 xml = try String(contentsOfURL: file)
                 xml = xml.stringByReplacingOccurrencesOfString("{{TITLE}}", withString: title)
-                xml = xml.stringByReplacingOccurrencesOfString("{{SHELFS}}", withString: creditsString)
-                xml = xml.stringByReplacingOccurrencesOfString("{{CAROUSEL}}", withString: carousel)
+                
+                if popularMovies.characters.count > 10 {
+                    shelfs += self.buildShelf("Popular Movies", content: popularMovies)
+                    xml = xml.stringByReplacingOccurrencesOfString("{{SHELFS}}", withString: shelfs)
+                }
+
             } catch {
                 print("Could not open Catalog template")
             }

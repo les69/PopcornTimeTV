@@ -17,15 +17,6 @@
         <title>{{TITLE}}</title>
     </banner>
     <collectionList>
-        <carousel>
-            <section>
-                {{CAROUSEL}}
-            </section>
-        </carousel>
-        <shelf>
-            <section>
-                {{SHELFS}}
-            </section>
-        </shelf>
+        {{SHELFS}}
     </collectionList>
 </stackTemplate>
