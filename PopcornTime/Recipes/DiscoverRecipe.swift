@@ -37,6 +37,13 @@ public class DiscoverRecipe: RecipeType {
         }
         return mapped.joinWithSeparator("\n")
     }
+    
+    public var latestMovies: String {
+        let mapped: [String] = movies.map {
+            return $0.lockUp
+        }
+        return mapped.joinWithSeparator("\n")
+    }
 
     
     func buildShelf(title: String, content: String) -> String {
@@ -58,6 +65,7 @@ public class DiscoverRecipe: RecipeType {
                 
                 if popularMovies.characters.count > 10 {
                     shelfs += self.buildShelf("Popular Movies", content: popularMovies)
+                    shelfs += self.buildShelf("Latest Movies", content: latestMovies)
                     xml = xml.stringByReplacingOccurrencesOfString("{{SHELFS}}", withString: shelfs)
                 }
 
