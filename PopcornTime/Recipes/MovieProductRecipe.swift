@@ -10,7 +10,7 @@ public struct MovieProductRecipe: RecipeType {
     let existsInWatchList: Bool
 
     public let theme = DefaultTheme()
-    public let presentationType = PresentationType.Default
+    public let presentationType = PresentationType.DefaultWithLoadingIndicator
 
     public init(movie: Movie, suggestions: [Movie], existsInWatchList: Bool) {
         self.movie = movie
@@ -27,10 +27,15 @@ public struct MovieProductRecipe: RecipeType {
     }
 
     var directorsString: String {
-        return movie.directors!.map { "<text>\($0.name.cleaned)</text>" }.joinWithSeparator("")
+        if movie.directors == nil{
+            return "Directors missing" }
+        return movie.directors.map { "<text>\($0.name.cleaned)</text>" }.joinWithSeparator("")
     }
 
     var actorsString: String {
+        if movie.actors == nil {
+            return "Actors missing"
+        }
         return movie.actors.map { "<text>\($0.name.cleaned)</text>" }.joinWithSeparator("")
     }
 
@@ -63,6 +68,9 @@ public struct MovieProductRecipe: RecipeType {
     }
 
     var castString: String {
+        if (movie.actors == nil){
+            return "Missing Actors"
+        }
         let actors: [String] = movie.actors.map {
             var headshot = ""
             if $0.mediumImage != "http://62.210.81.37/assets/images/actors/default_avatar.jpg" {
@@ -76,7 +84,11 @@ public struct MovieProductRecipe: RecipeType {
             string += "</monogramLockup>" + "\n"
             return string
         }
-        let directors: [String] = movie.directors!.map {
+        
+        if(movie.directors == nil){
+            return actors.joinWithSeparator("\n")
+        }
+        let directors: [String] = movie.directors.map {
             var headshot = ""
             if $0.mediumImage != "http://62.210.81.37/assets/images/directors/default_avatar.jpg" {
                 headshot = " src=\"\($0.mediumImage)\""
@@ -94,9 +106,9 @@ public struct MovieProductRecipe: RecipeType {
     }
 
     var watchlistButton: String {
-        var string = "<buttonLockup id =\"favoriteButton\" actionID=\"addWatchlist»\(String(movie.id))»\(movie.title.cleaned)»movie»\(movie.largeCoverImage)»\(movie.backgroundImage)»\(movie.imdbId)»»\(movie.slug)\">\n"
-        string += "<badge id =\"favoriteButtonBadge\" src=\"resource://button-{{WATCHLIST_ACTION}}\" />\n"
-        string += "<title>Favourites</title>\n"
+        var string = "<buttonLockup actionID=\"addWatchlist»\(String(movie.id))»\(movie.title.cleaned)»movie»\(movie.largeCoverImage)»\(movie.backgroundImage)\">\n"
+        string += "<badge src=\"resource://button-{{WATCHLIST_ACTION}}\" />\n"
+        string += "<title>Watch List</title>\n"
         string += "</buttonLockup>"
         return string
     }
@@ -130,14 +142,15 @@ public struct MovieProductRecipe: RecipeType {
                 xml = try String(contentsOfURL: file)
                 xml = xml.stringByReplacingOccurrencesOfString("{{DIRECTORS}}", withString: directorsString)
                 xml = xml.stringByReplacingOccurrencesOfString("{{ACTORS}}", withString: actorsString)
-                var tomato = movie.tomatoesCriticsRating.lowercaseString
-                if tomato == "none" {
+                var tomato = movie.tomatoesCriticsRating?.lowercaseString
+                if tomato == "none" || tomato == nil {
                     xml = xml.stringByReplacingOccurrencesOfString("<text><badge src=\"resource://tomato-{{TOMATO_CRITIC_RATING}}\"/> {{TOMATO_CRITIC_SCORE}}%</text>", withString: "")
                 } else if tomato == "rotten" {
                     tomato = "splat"
                 }
-                xml = xml.stringByReplacingOccurrencesOfString("{{TOMATO_CRITIC_RATING}}", withString: tomato)
-                xml = xml.stringByReplacingOccurrencesOfString("{{TOMATO_CRITIC_SCORE}}", withString: String(movie.tomatoesCriticsScore))
+                //Remove comment when using a different API 
+                //xml = xml.stringByReplacingOccurrencesOfString("{{TOMATO_CRITIC_RATING}}", withString: tomato!)
+                //xml = xml.stringByReplacingOccurrencesOfString("{{TOMATO_CRITIC_SCORE}}", withString: String(movie.tomatoesCriticsScore))
 
                 xml = xml.stringByReplacingOccurrencesOfString("{{RUNTIME}}", withString: runtime)
                 xml = xml.stringByReplacingOccurrencesOfString("{{TITLE}}", withString: movie.title.cleaned)
@@ -160,9 +173,9 @@ public struct MovieProductRecipe: RecipeType {
 
                 xml = xml.stringByReplacingOccurrencesOfString("{{WATCH_LIST_BUTTON}}", withString: watchlistButton)
                 if existsInWatchList {
-                    xml = xml.stringByReplacingOccurrencesOfString("{{WATCHLIST_ACTION}}", withString: "rated")
+                    xml = xml.stringByReplacingOccurrencesOfString("{{WATCHLIST_ACTION}}", withString: "remove")
                 } else {
-                    xml = xml.stringByReplacingOccurrencesOfString("{{WATCHLIST_ACTION}}", withString: "rate")
+                    xml = xml.stringByReplacingOccurrencesOfString("{{WATCHLIST_ACTION}}", withString: "add")
                 }
                 xml = xml.stringByReplacingOccurrencesOfString("{{MOVIE_ID}}", withString: String(movie.id))
                 xml = xml.stringByReplacingOccurrencesOfString("{{TYPE}}", withString: "movie")

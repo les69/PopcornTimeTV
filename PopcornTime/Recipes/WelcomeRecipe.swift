@@ -4,16 +4,16 @@ import TVMLKitchen
 import PopcornKit
 
 public struct WelcomeRecipe: RecipeType {
-    
+
     public let theme = DefaultTheme()
     public let presentationType = PresentationType.DefaultWithLoadingIndicator
-    
+
     let title: String
     let movies: [Movie]
     let shows: [Show]
     let watchListMovies: [WatchItem]
     let watchListShows: [WatchItem]
-    
+
     init(title: String, movies: [Movie], shows: [Show], watchListMovies: [WatchItem], watchListShows: [WatchItem]) {
         self.title = title
         self.movies = movies
@@ -21,7 +21,7 @@ public struct WelcomeRecipe: RecipeType {
         self.watchListMovies = watchListMovies
         self.watchListShows = watchListShows
     }
-    
+
     init(title: String) {
         self.title = title
         self.movies = []
@@ -29,7 +29,7 @@ public struct WelcomeRecipe: RecipeType {
         self.watchListMovies = []
         self.watchListShows = []
     }
-    
+
     public var xmlString: String {
         var xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
         xml += "<document>"
@@ -37,28 +37,28 @@ public struct WelcomeRecipe: RecipeType {
         xml += "</document>"
         return xml
     }
-    
+
     public var popularMovies: String {
         let mapped: [String] = movies.map {
             return $0.lockUp
         }
         return mapped.joinWithSeparator("\n")
     }
-    
+
     public var popularShows: String {
         let mapped: [String] = shows.map {
             return $0.lockUp
         }
         return mapped.joinWithSeparator("\n")
     }
-    
+
     public var carousel: String {
         let mapped: [String] = shows.map {
             return $0.carousel
         }
         return mapped.joinWithSeparator("\n")
     }
-    
+
     public var moviesWatchList: String {
         let mapped: [String] = watchListMovies.map {
             var string = "<lockup actionID=\"showMovie»\($0.id)\">"
@@ -69,7 +69,7 @@ public struct WelcomeRecipe: RecipeType {
         }
         return mapped.joinWithSeparator("\n")
     }
-    
+
     public var showsWatchList: String {
         let mapped: [String] = watchListShows.map {
             var string = "<lockup actionID=\"showShow»\($0.id)»\($0.slugged)»\($0.tvdbId)\">"
@@ -80,15 +80,15 @@ public struct WelcomeRecipe: RecipeType {
         }
         return mapped.joinWithSeparator("\n")
     }
-    
+
     public var randomMovieFanart: String {
         return movies[Int(arc4random_uniform(UInt32(movies.count)))].backgroundImage
     }
-    
+
     public var randomTVShowFanart: String {
         return shows[Int(arc4random_uniform(UInt32(shows.count)))].fanartImage
     }
-    
+
     public var katSearch: String {
         var content = ""
         if let katSearch = NSUserDefaults.standardUserDefaults().objectForKey("KATSearch") as? Bool {
@@ -100,7 +100,19 @@ public struct WelcomeRecipe: RecipeType {
         }
         return content
     }
-    
+    public var corsaroSearch: String {
+        var content = ""
+        if let corsaroSearch = NSUserDefaults.standardUserDefaults().objectForKey("KATSearch") as? Bool {
+            if corsaroSearch.boolValue {
+                content = "<lockup actionID=\"chooseCorsaroSearch\">"
+                content += "<img class=\"round\" src=\"http://s.ilcorsaronero.info/images/h_logo.gif\" width=\"548\" height=\"250\"></img>"
+                
+                content += "<overlay><title>ilCorsaroNero</title></overlay></lockup>"
+            }
+        }
+        return content
+    }
+
     public var randomWatchlistArt: String {
         if watchListShows.count > 0 {
             if let image = watchListShows[Int(arc4random_uniform(UInt32(watchListShows.count)))].fanartImage {
@@ -109,7 +121,7 @@ public struct WelcomeRecipe: RecipeType {
                 return watchListShows[Int(arc4random_uniform(UInt32(watchListShows.count)))].coverImage
             }
         }
-        
+
         if watchListMovies.count > 0 {
             if let image = watchListMovies[Int(arc4random_uniform(UInt32(watchListMovies.count)))].fanartImage {
                 return image
@@ -117,11 +129,11 @@ public struct WelcomeRecipe: RecipeType {
                 return watchListMovies[Int(arc4random_uniform(UInt32(watchListMovies.count)))].coverImage
             }
         }
-        
+
         return "https://github.com/PopcornTimeTV/PopcornTimeTV/blob/master/Assets/Watchlist.lsr?raw=true"
-        
+
     }
-    
+
     func buildShelf(title: String, content: String) -> String {
         var shelf = "<shelf><header><title>"
         shelf += title
@@ -130,7 +142,7 @@ public struct WelcomeRecipe: RecipeType {
         shelf += "</section></shelf>"
         return shelf
     }
-    
+
     public var template: String {
         var xml = ""
         var shelfs = ""
@@ -142,7 +154,8 @@ public struct WelcomeRecipe: RecipeType {
                 xml = xml.stringByReplacingOccurrencesOfString("{{TVSHOWS_BACKGROUND}}", withString: randomTVShowFanart)
                 xml = xml.stringByReplacingOccurrencesOfString("{{WATCHLIST_BACKGROUND}}", withString: randomWatchlistArt)
                 xml = xml.stringByReplacingOccurrencesOfString("{{KAT_SEARCH}}", withString: katSearch)
-                
+                xml = xml.stringByReplacingOccurrencesOfString("{{CORSARO_SEARCH}}", withString: corsaroSearch)
+
                 if popularMovies.characters.count > 10 {
                     shelfs += self.buildShelf("Popular Movies", content: popularMovies)
                 }
@@ -162,5 +175,5 @@ public struct WelcomeRecipe: RecipeType {
         }
         return xml
     }
-    
+
 }

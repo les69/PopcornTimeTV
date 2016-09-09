@@ -66,7 +66,7 @@ public struct SeasonProductRecipe: RecipeType {
     let existsInWatchList: Bool
 
     public let theme = DefaultTheme()
-    public let presentationType = PresentationType.Default
+    public let presentationType = PresentationType.DefaultWithLoadingIndicator
 
     public init(show: Show, showInfo: ShowInfo, episodes: [Episode], detailedEpisodes: [DetailedEpisode], seasonInfo: SeasonInfo, existsInWatchlist: Bool) {
         self.show = show
@@ -92,7 +92,7 @@ public struct SeasonProductRecipe: RecipeType {
     }
 
     var actorsString: String {
-        return show.actors.map { "<text>\($0.name.cleaned)</text>" }.joinWithSeparator("")
+        return showInfo.cast.map { "<text>\($0.cleaned)</text>" }.joinWithSeparator("")
     }
 
     var genresString: String {
@@ -116,46 +116,24 @@ public struct SeasonProductRecipe: RecipeType {
 
     var castString: String {
 
-        let actors: [String] = show.actors.map {
+        let mapped: [String] = showInfo.cast.map {
 
-            var headshot = ""
-            if $0.mediumImage != "http://62.210.81.37/assets/images/actors/default_avatar.jpg" {
-                headshot = " src=\"\($0.mediumImage)\""
-            }
-            let name = $0.name.componentsSeparatedByString(" ")
-            var string = "<monogramLockup actionID=\"showActor»\($0.name)\">" + "\n"
-            string += "<monogram firstName=\"\(name.first!)\" lastName=\"\(name.last!)\"\(headshot)/>"
-            string += "<title>\($0.name.cleaned)</title>" + "\n"
+            let name = $0.componentsSeparatedByString(" ")
+            var string = "<monogramLockup actionID=\"showActor»\($0)\">" + "\n"
+            string += "<monogram firstName=\"\(name.first!)\" lastName=\"\(name.last!)\" src=\"\"/>"
+            string += "<title>\($0.cleaned)</title>" + "\n"
             string += "<subtitle>Actor</subtitle>" + "\n"
             string += "</monogramLockup>" + "\n"
             return string
         }
-        var directors: [String] = [""]
-        if show.directors != nil {
-            directors = show.directors.map {
-            var headshot = ""
-            if $0.mediumImage != "http://62.210.81.37/assets/images/directors/default_avatar.jpg" {
-                headshot = " src=\"\($0.mediumImage)\""
-            }
-            let name = $0.name.componentsSeparatedByString(" ")
-            var string = "<monogramLockup actionID=\"showDirector»\($0.name)\">" + "\n"
-            string += "<monogram firstName=\"\(name.first!)\" lastName=\"\(name.last!)\"\(headshot)/>"
-            string += "<title>\($0.name.cleaned)</title>" + "\n"
-            string += "<subtitle>Director</subtitle>" + "\n"
-            string += "</monogramLockup>" + "\n"
-            return string
-            }
-        }
 
-        let mapped = actors+directors
-        
         return mapped.joinWithSeparator("\n")
     }
 
     var watchlistButton: String {
-        var string = "<buttonLockup id =\"favoriteButton\" actionID=\"addWatchlist»\(show.id)»\(show.title)»show»\(show.posterImage)»\(show.fanartImage)»\(show.id)»\(show.tvdbId)»\(show.title.slugged)\">\n"
-        string += "<badge id =\"favoriteButtonBadge\" src=\"resource://button-{{WATCHLIST_ACTION}}\" />\n"
-        string += "<title>Favourites</title>\n"
+        var string = "<buttonLockup actionID=\"addWatchlist»\(show.id)»\(show.title)»show»\(show.posterImage)»\(show.fanartImage)»\(show.imdbId)»\(show.tvdbId)»\(show.title.slugged)\">\n"
+        string += "<badge src=\"resource://button-{{WATCHLIST_ACTION}}\" />\n"
+        string += "<title>Watchlist</title>\n"
         string += "</buttonLockup>"
         return string
     }
@@ -174,13 +152,13 @@ public struct SeasonProductRecipe: RecipeType {
     }
 
     var seasonsButtonTitle: String {
-        return "<badge src=\"http://i.cubeupload.com/trh7eQ.png\" width=\"50px\" height=\"37px\"></badge>"
+        return "\(seasonInfo.first) to \(seasonInfo.last)"
     }
 
     var seasonsButton: String {
         var string = "<buttonLockup actionID=\"showSeasons»\(show.id)»\(show.title.slugged)»\(show.tvdbId)\">"
-        string += "\(seasonsButtonTitle)"
-        string += "<title>Series</title>"
+        string += "<text>\(seasonsButtonTitle)</text>"
+        string += "<title>Seasons</title>"
         string += "</buttonLockup>"
         return string
     }
@@ -204,27 +182,23 @@ public struct SeasonProductRecipe: RecipeType {
             if let synopsis = $0.episode.overview {
                 overview = synopsis.cleaned
             }
-            let fullscreen = $0.fullScreenshot ?? ""
-            let mediumscreen = $0.mediumScreenshot ?? ""
-            let episodetitle = $0.episodeTitle?.cleaned ?? ""
-            let title = show.title?.cleaned ?? ""
-            var string = "<lockup actionID=\"playMovie»\(fullscreen)»\(show.fanartImage)»\(episodetitle)»\(overview)»\(torrents($0.episode).cleaned ?? "")»\($0.episode.tvdbId)»\(title)»\($0.episode.episode)»\($0.episode.season)\">" + "\n"
-            string += "<img src=\"\(mediumscreen)\" width=\"310\" height=\"175\" />" + "\n"
-            string += "<title>\($0.episode.episode). \(episodetitle)</title>" + "\n"
+            var string = "<lockup actionID=\"playMovie»\($0.fullScreenshot)»\(show.fanartImage)»\($0.episodeTitle.cleaned)»\(overview)»\(torrents($0.episode).cleaned)»\($0.episode.tvdbId)»\(show.title.cleaned)»\($0.episode.episode)»\($0.episode.season)\">" + "\n"
+            string += "<img src=\"\($0.mediumScreenshot)\" width=\"310\" height=\"175\" />" + "\n"
+            string += "<title>\($0.episode.episode). \($0.episodeTitle.cleaned)</title>" + "\n"
             string += "<overlay class=\"overlayPosition\">" + "\n"
             string += "<badge src=\"resource://button-play\" class=\"whiteButton overlayPosition\"/>" + "\n"
             string += "</overlay>" + "\n"
             string += "<relatedContent>" + "\n"
             string += "<infoTable>" + "\n"
             string +=   "<header>" + "\n"
-            string +=       "<title>\(episodetitle)</title>" + "\n"
+            string +=       "<title>\($0.episodeTitle.cleaned)</title>" + "\n"
             string +=       "<description>Episode \($0.episode.episode)</description>" + "\n"
             string +=   "</header>" + "\n"
             string +=   "<info>" + "\n"
             string +=       "<header>" + "\n"
             string +=           "<title>Description</title>" + "\n"
             string +=       "</header>" + "\n"
-            string +=       "<description allowsZooming=\"true\" moreLabel=\"more\" actionID=\"showDescription»\(episodetitle)»\(overview)\">\(overview)</description>" + "\n"
+            string +=       "<description allowsZooming=\"true\" moreLabel=\"more\" actionID=\"showDescription»\($0.episodeTitle.cleaned)»\(overview)\">\(overview)</description>" + "\n"
             string +=   "</info>" + "\n"
             string += "</infoTable>" + "\n"
             string += "</relatedContent>" + "\n"
@@ -253,8 +227,8 @@ public struct SeasonProductRecipe: RecipeType {
 
                 xml = xml.stringByReplacingOccurrencesOfString("{{RUNTIME}}", withString: runtime)
                 xml = xml.stringByReplacingOccurrencesOfString("{{GENRES}}", withString: genresString)
-                xml = xml.stringByReplacingOccurrencesOfString("{{DESCRIPTION}}", withString: show.synopsis!.cleaned)
-                xml = xml.stringByReplacingOccurrencesOfString("{{SHORT_DESCRIPTION}}", withString: show.synopsis!.cleaned)
+                xml = xml.stringByReplacingOccurrencesOfString("{{DESCRIPTION}}", withString: show.synopsis.cleaned)
+                xml = xml.stringByReplacingOccurrencesOfString("{{SHORT_DESCRIPTION}}", withString: show.synopsis.cleaned)
                 xml = xml.stringByReplacingOccurrencesOfString("{{IMAGE}}", withString: show.posterImage)
                 xml = xml.stringByReplacingOccurrencesOfString("{{FANART_IMAGE}}", withString: show.fanartImage)
                 xml = xml.stringByReplacingOccurrencesOfString("{{YEAR}}", withString: "")
@@ -263,9 +237,9 @@ public struct SeasonProductRecipe: RecipeType {
 
                 xml = xml.stringByReplacingOccurrencesOfString("{{WATCH_LIST_BUTTON}}", withString: watchlistButton)
                 if existsInWatchList {
-                    xml = xml.stringByReplacingOccurrencesOfString("{{WATCHLIST_ACTION}}", withString: "rated")
+                    xml = xml.stringByReplacingOccurrencesOfString("{{WATCHLIST_ACTION}}", withString: "remove")
                 } else {
-                    xml = xml.stringByReplacingOccurrencesOfString("{{WATCHLIST_ACTION}}", withString: "rate")
+                    xml = xml.stringByReplacingOccurrencesOfString("{{WATCHLIST_ACTION}}", withString: "add")
                 }
 
                 xml = xml.stringByReplacingOccurrencesOfString("{{EPISODE_COUNT}}", withString: episodeCount)

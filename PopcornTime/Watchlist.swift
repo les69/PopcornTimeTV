@@ -4,7 +4,7 @@ import TVMLKitchen
 
 struct Watchlist: TabItem {
 
-    let title = "Favourites"
+    let title = "Watchlist"
 
     var fetchType: FetchType! = .Movies
 

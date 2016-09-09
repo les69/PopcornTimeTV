@@ -39,3 +39,17 @@ extension KATResult {
     }
 
 }
+extension CorsaroResult {
+    
+    
+    var lockUp: String {
+        //[todo] find a way to insert the magnet
+        var string = "<lockup actionID=\"startCMovie»\(self.id)\" playActionID=\"playCMovieById»\(self.id)\">"
+        string += "<img class=\"img\" src=\"\(self.picture)\" width=\"250\" height=\"375\" />"
+        string += "<title style=\"tv-text-highlight-style: marquee-and-show-on-highlight;\">\(self.title)</title>"
+        string += "</lockup>"
+        return string
+    }
+
+    
+}

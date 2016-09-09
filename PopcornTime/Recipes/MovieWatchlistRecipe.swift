@@ -21,6 +21,7 @@ public struct MovieWatchlistRecipe: RecipeType {
         xml += "<document>"
         xml += template
         xml += "</document>"
+        print (xml)
         return xml
     }
 

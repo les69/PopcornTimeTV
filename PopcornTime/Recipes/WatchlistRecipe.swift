@@ -6,8 +6,8 @@ import PopcornKit
 public struct WatchlistRecipe: RecipeType {
 
     public let theme = DefaultTheme()
-    public let presentationType = PresentationType.Default
-    
+    public let presentationType = PresentationType.DefaultWithLoadingIndicator
+
     let title: String
     let watchListMovies: [WatchItem]
     let watchListShows: [WatchItem]
@@ -65,8 +65,8 @@ public struct WatchlistRecipe: RecipeType {
 
     public var template: String {
         var shelfs = ""
-        shelfs += self.buildShelf("Movies", content: moviesWatchList)
-        shelfs += self.buildShelf("Shows", content: showsWatchList)
+        shelfs += self.buildShelf("Movies Watchlist", content: moviesWatchList)
+        shelfs += self.buildShelf("TV Shows Watchlist", content: showsWatchList)
 
         var xml = ""
         if let file = NSBundle.mainBundle().URLForResource("WatchlistRecipe", withExtension: "xml") {

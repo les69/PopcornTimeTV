@@ -4,9 +4,8 @@ import UIKit
 import PopcornKit
 import TVMLKitchen
 
-class SettingsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate,TraktTVAPIViewDelegate {
-    let manager = NetworkManager.sharedManager()
-    
+class SettingsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var settingsIcon: UIImageView!
 
@@ -28,7 +27,7 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
     // MARK: Table View
 
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return 4
+        return 3
     }
 
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -36,13 +35,10 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
             return 1
         }
         if section == 1 {
-            return 3
+            return 2
         }
         if section == 2 {
-            return 3
-        }
-        if section == 3 {
-            return 1
+            return 4
         }
         return 0
     }
@@ -52,7 +48,6 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
         case 0: return "TV Shows"
         case 1: return "Player"
         case 2: return "Other"
-        case 3: return "Trakt"
         default: return nil
         }
     }
@@ -80,13 +75,13 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
             let settings = SQSubSetting.loadFromDisk()
             if indexPath.row == 0 {
                 cell.textLabel?.text = "Font Size"
-                if settings.sizeFloat == 20.0 {
+                if settings.sizeFloat == 46.0 {
                     cell.detailTextLabel?.text = "Small"
-                } else if settings.sizeFloat == 16.0 {
+                } else if settings.sizeFloat == 56.0 {
                     cell.detailTextLabel?.text = "Medium"
-                } else if settings.sizeFloat == 12.0 {
+                } else if settings.sizeFloat == 66.0 {
                     cell.detailTextLabel?.text = "Medium Large"
-                } else if settings.sizeFloat == 6.0 {
+                } else if settings.sizeFloat == 96.0 {
                     cell.detailTextLabel?.text = "Large"
                 }
                 cell.accessoryType = .None
@@ -110,13 +105,6 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
                 }
                 cell.accessoryType = .None
             }
-            
-            if indexPath.row == 2 {
-                cell.textLabel?.text = "Subtitle Encoding"
-                cell.detailTextLabel?.text = settings.encoding
-                cell.accessoryType = .None
-            }
-
 
         case 2:
             if indexPath.row == 0 {
@@ -126,6 +114,16 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
             }
 
             if indexPath.row == 1 {
+                cell.textLabel?.text = "Kick Ass Search"
+                if let katSearch = NSUserDefaults.standardUserDefaults().objectForKey("KATSearch") as? Bool {
+                    cell.detailTextLabel?.text = katSearch.boolValue ? "Yes" : "No"
+                } else {
+                    cell.detailTextLabel?.text = "No"
+                }
+                cell.accessoryType = .None
+            }
+
+            if indexPath.row == 2 {
                 cell.textLabel?.text = "Start web server"
                 if let startWebServer = NSUserDefaults.standardUserDefaults().objectForKey("StartWebServer") as? Bool {
                     cell.detailTextLabel?.text = startWebServer.boolValue ? "Yes" : "No"
@@ -134,25 +132,16 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
                 }
                 cell.accessoryType = .None
             }
-            
-            if indexPath.row == 2 {
+
+            if indexPath.row == 3 {
                 cell.textLabel?.text = "Version"
                 cell.detailTextLabel?.text = "\(version) (\(build))"
                 cell.accessoryType = .None
             }
-        case 3:
-            if indexPath.row == 0 {
-                cell.textLabel?.text = "Sign into Trakt"
-                cell.detailTextLabel?.text = ""
-                if TraktTVAPI.sharedManager().userLoaded() {
-                    cell.textLabel?.text = "Signout from Trakt"
-                    cell.detailTextLabel?.text = TraktTVAPI.sharedManager().user
-                }
-                cell.accessoryType = .None
-            }
-    
+
         default: break
         }
+
         return cell
     }
 
@@ -199,25 +188,25 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
                     let alertController = UIAlertController(title: "Subtitle Font Size", message: "Choose a font size for subtitles.", preferredStyle: .Alert)
                     alertController.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: nil))
                     alertController.addAction(UIAlertAction(title: "Small (46pts)", style: .Default, handler: { action in
-                        settings.sizeFloat = 20.0
+                        settings.sizeFloat = 46.0
                         settings.writeToDisk()
                         tableView.reloadData()
                     }))
 
                     alertController.addAction(UIAlertAction(title: "Medium (56pts)", style: .Default, handler: { action in
-                        settings.sizeFloat = 16.0
+                        settings.sizeFloat = 56.0
                         settings.writeToDisk()
                         tableView.reloadData()
                     }))
 
                     alertController.addAction(UIAlertAction(title: "Medium Large (66pts)", style: .Default, handler: { action in
-                        settings.sizeFloat = 12.0
+                        settings.sizeFloat = 66.0
                         settings.writeToDisk()
                         tableView.reloadData()
                     }))
 
                     alertController.addAction(UIAlertAction(title: "Large (96pts)", style: .Default, handler: { action in
-                        settings.sizeFloat = 6.0
+                        settings.sizeFloat = 96.0
                         settings.writeToDisk()
                         tableView.reloadData()
                     }))
@@ -255,41 +244,21 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
 
                     self.presentViewController(alertController, animated: true, completion: nil)
                 }
-                
-                if indexPath.row == 2 {
-                    let alertController = UIAlertController(title: "Subtitle Encoding", message: "Choose an encoding for the subtitles.", preferredStyle: .Alert)
-                    alertController.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: nil))
-                    let path = NSBundle.mainBundle().pathForResource("encodingTypes", ofType: "plist")
-                    let labels = NSDictionary.init(contentsOfFile: path!)
-                    let titles = labels!["Titles"] as? NSArray
-                    let values = labels!["Values"] as? NSArray
-                    for title in titles! {
-                        print("Values of title ",values![(titles?.indexOfObject(title))!] as? String)
-                        alertController.addAction(UIAlertAction(title: title as? String ,style: .Default, encoding:values![(titles?.indexOfObject(title))!] as? String, handler: { action in
-                            settings.encoding = action.encodingArg
-                            settings.writeToDisk()
-                            tableView.reloadData()
-                        }))
-                    }
-                    self.presentViewController(alertController, animated: true, completion: nil)
-                }
             }
 
         case 2:
             if indexPath.row == 0 {
                 // TV Shows Theme
                 let alertController = UIAlertController(title: "Clear Cache", message: "Clearing the cache will delete any unused images, incomplete torrent downloads and subtitles.", preferredStyle: .Alert)
+                alertController.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: nil))
                 alertController.addAction(UIAlertAction(title: "Clear Cache", style: .Destructive, handler: { action in
                     self.clearCache()
-                    alertController.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: nil))
                 }))
-                alertController.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: nil))
-
 
                 self.presentViewController(alertController, animated: true, completion: nil)
             }
 
-            /*if indexPath.row == 1 {
+            if indexPath.row == 1 {
                 let alertController = UIAlertController(title: "Kick Ass Torrent Search", message: "Activate Kick Ass torrent search that allows you search movies & tv shows from \"kat.cr\". You must restart application to apply this setting.", preferredStyle: .Alert)
                 alertController.addAction(UIAlertAction(title: "Yes", style: .Default, handler: { action in
                     NSUserDefaults.standardUserDefaults().setBool(true, forKey: "KATSearch")
@@ -300,9 +269,9 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
                     tableView.reloadData()
                 }))
                 self.presentViewController(alertController, animated: true, completion: nil)
-            }*/
+            }
 
-            if indexPath.row == 1 {
+            if indexPath.row == 2 {
                 var ip = WebServerManager.sharedManager().getWiFiAddress()
                 if ip == nil {
                     ip = WebServerManager.sharedManager().getLANAddress()
@@ -321,7 +290,7 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
                 self.presentViewController(alertController, animated: true, completion: nil)
             }
 
-            if indexPath.row == 2 {
+            if indexPath.row == 3 {
                 UpdateManager.sharedManager().checkForUpdates(forVersion: version) { (updateAvailable, name, releaseNotes, error) in
                     if updateAvailable {
                         let alertController = UIAlertController(title: "Update Available", message: "A new version of PopcornTime is available.\n\(name!)\n\n\(releaseNotes!)\n\nVisit https://github.com/PopcornTimeTV/PopcornTimeTV to update.", preferredStyle: .Alert)
@@ -333,19 +302,6 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
                         alertController.addAction(UIAlertAction(title: nil, style: .Cancel, handler: nil))
                     }
                 }
-            }
-        case 3:
-            if indexPath.row == 0{
-                if TraktTVAPI.sharedManager().userLoaded(){
-                    
-                    TraktTVAPI.sharedManager().clearToken()
-                    self.tableView.reloadData()
-                }else{
-                    if let vc: UIViewController = TraktTVAPI.sharedManager().authenticateUser(self){
-                        self.presentViewController(vc, animated:true, completion:nil)
-                    }
-                }
-                
             }
         default: break
         }
@@ -391,16 +347,5 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
 
     }
-    
-    func TraktDidCancel(controller: UIViewController) {
-        dismissViewControllerAnimated(true, completion: nil)
-    }
-    
-    func TraktDidAuthenticate(controller: UIViewController) {
-        self.tableView.reloadData()
-        dismissViewControllerAnimated(true, completion: nil)
-    }
-    
+
 }
-
-

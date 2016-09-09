@@ -9,7 +9,6 @@
 //#import "SYLoadingProgressView.h"
 #import "SQTabMenuCollectionViewCell.h"
 #import <TVVLCKit/TVVLCKit.h>
-#import <TVVLCKit/VLCMediaPlayer.h>
 #import "SQSubSetting.h"
 #import "PopcornTime-Swift.h"
 #import <PopcornTorrent/PopcornTorrent.h>
@@ -17,7 +16,6 @@
 #import "UIImageView+Network.h"
 #import "VLCIRTVTapGestureRecognizer.h"
 #import "VLCSiriRemoteGestureRecognizer.h"
-#import <MediaAccessibility/MediaAccessibility.h>
 
 typedef NS_ENUM(NSInteger, VLCPlayerScanState)
 {
@@ -51,7 +49,6 @@ static NSString *const kText = @"kText";
     NSTimer *_subtitleTimer;
     float _sizeFloat;
     float _offsetFloat;
-    CGFloat _lastPointDelayPanX;
     
     NSIndexPath *_lastIndexPathSubtitle;
     NSIndexPath *_lastIndexPathAudio;
@@ -128,46 +125,11 @@ static NSString *const kText = @"kText";
     
 }// initWithURL:
 
--(NSString*) downloadTorrent:(NSString*) torrent{
-    // 1
-    NSURL *url = [NSURL URLWithString:torrent];
-    
-    // 2
-    NSURL* downloadPath = [[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask].lastObject;
-    BOOL isDir=true;
-    NSError* err;
-    if(![[NSFileManager defaultManager]fileExistsAtPath:[downloadPath URLByAppendingPathComponent:@"Downloads"].relativePath isDirectory:&isDir]){
-        [[NSFileManager defaultManager] createDirectoryAtPath:[downloadPath URLByAppendingPathComponent:@"Downloads"].relativePath withIntermediateDirectories:YES attributes:nil error:&err];
-        if(err!=nil){
-            NSLog(@"error while creating folder %@",err.description);
-            return nil;
-        }
-    }
-    dispatch_semaphore_t sem = dispatch_semaphore_create(0);
-    downloadPath = [downloadPath URLByAppendingPathComponent:@"Downloads"];
-    downloadPath = [downloadPath URLByAppendingPathComponent:[NSString stringWithFormat:@"%@.torrent",[_videoInfo[@"movieName"] stringByReplacingOccurrencesOfString:@" " withString:@""]]];
-    downloadPath = [NSURL fileURLWithPath:[[NSString stringWithString:downloadPath.relativePath] stringByReplacingOccurrencesOfString:@":" withString:@""]];
-    if([[NSFileManager defaultManager]fileExistsAtPath:downloadPath.relativePath])return [downloadPath relativePath];
-    NSURLSessionDownloadTask *downloadTask = [[NSURLSession sharedSession]
-                                          downloadTaskWithURL:url completionHandler:^(NSURL * _Nullable location, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-                                              NSError *erro;
-                                              [[NSFileManager defaultManager] moveItemAtURL:location toURL:downloadPath error:&erro];
-                                              if(erro!=nil)NSLog(@"error while moving file%@",erro.description);
-                                              dispatch_semaphore_signal(sem);
-                                          }];
-    
-    // 3
-    [downloadTask resume];
-    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
-    
-    return [downloadPath relativePath];
-}
 
 - (void)beginStreamingTorrent {
     // lets not get a retain cycle going
     __weak __typeof__(self) weakSelf = self;
     selectActivated=NO;
-    if([_magnet containsString:@"https://"])_magnet=[self downloadTorrent:_magnet];
     [[PTTorrentStreamer sharedStreamer] startStreamingFromFileOrMagnetLink:_magnet progress:^(PTTorrentStatus status) {
         
         // Percentage
@@ -207,6 +169,14 @@ static NSString *const kText = @"kText";
     
     [self.view canBecomeFocused];
     
+    // Sub back
+    if (subSetting.backgroundType == SQSubSettingBackgroundBlack) {
+        self.backSubtitleView.backgroundColor = [UIColor colorWithWhite:.0 alpha:0.9];
+    }
+    else if (subSetting.backgroundType == SQSubSettingBackgroundWhite) {
+        self.backSubtitleView.backgroundColor = [UIColor colorWithWhite:1.0 alpha:0.9];
+    }
+    
     // Subs
     {
         UICollectionViewFlowLayout *collectionViewFlowLayout = [[UICollectionViewFlowLayout alloc]init];
@@ -239,8 +209,6 @@ static NSString *const kText = @"kText";
         self.audioTabBarCollectionView.remembersLastFocusedIndexPath = YES;
     }
     
-    //VLCMediaListPlayer* _listPlayer = [[VLCMediaListPlayer alloc] initWithOptions:@[[NSString stringWithFormat:@"--%@=%@", @"", @""]] andDrawable:self.containerView];
-    
     _mediaplayer              = [[VLCMediaPlayer alloc] init];
     _mediaplayer.drawable     = self.containerView;
     _mediaplayer.delegate     = self;
@@ -252,6 +220,8 @@ static NSString *const kText = @"kText";
     self.transportBar.scrubbingFraction = 0.0;
     self.indicatorView.hidden=YES;
     
+    self.backSubtitleView.layer.cornerRadius  = 10.0;
+    self.backSubtitleView.layer.masksToBounds = YES;
     self.dimmingView.alpha = 0.0;
     self.osdView.alpha = 0.0;
     
@@ -315,14 +285,11 @@ static NSString *const kText = @"kText";
     [self showOSD];
     [self hideDelayButton];
     
+    self.heightCurrentLineSpace.constant = 25.0;
     [self.view layoutIfNeeded];
     
     // Media player
     _mediaplayer.media = [VLCMedia mediaWithURL:_url];
-    [[_mediaplayer media]synchronousParse];
-    
-    [[_mediaplayer media] addOptions:@{kVLCSettingTextEncoding : subSetting.encoding}];
-    [_mediaplayer performSelector:@selector(setTextRendererFontSize:) withObject:[NSNumber numberWithFloat:subSetting.sizeFloat]];
     [_mediaplayer play];
     
     NSUserDefaults *streamContinuanceDefaults = [[NSUserDefaults alloc]initWithSuiteName:@"group.com.popcorntime.PopcornTime.StreamContinuance"];
@@ -423,7 +390,7 @@ static NSString *const kText = @"kText";
             if (self.isSeekable) {
                 [self startScrubbing];
                 selectActivated=NO;
-            }else{
+            } else {
                 return;
             }
         } else if (translation.y > 200.0) {
@@ -431,15 +398,7 @@ static NSString *const kText = @"kText";
             panGestureRecognizer.enabled = YES;
             [self showInfoVCIfNotScrubbing];
             return;
-        } else if(ABS(translation.x) > 150.0 && self.subValueDelayButton.isFocused){
-            _offsetFloat += ((translation.x - _lastPointDelayPanX) * 0.005);
-            NSString *signStr = (_offsetFloat > 0) ? @"+" : @"";
-            NSString *delayValue = [NSString stringWithFormat:@"%@%4.2f", signStr, (roundf(_offsetFloat) * 5.0) / 10.0];
-            [self.subValueDelayButton setTitle:delayValue forState:UIControlStateNormal];
-            _lastPointDelayPanX = translation.x;
-            [_mediaplayer setCurrentVideoSubTitleDelay:_offsetFloat];
-            return;
-        }else{
+        } else {
             return;
         }
     }
@@ -481,10 +440,10 @@ static NSString *const kText = @"kText";
         bar.playbackFraction = bar.scrubbingFraction;
         [self stopScrubbing];
         [_mediaplayer setPosition:bar.scrubbingFraction];
-    } else if(_mediaplayer.playing && ![self isTopMenuOnScreen]) {
+    } else if(_mediaplayer.playing) {
         [_mediaplayer pause];
         selectActivated=YES;
-    }else if(!_mediaplayer.playing && ![self isTopMenuOnScreen]){
+    }else if(!_mediaplayer.playing){
         [self playandPause:nil];
     }
 }
@@ -532,7 +491,7 @@ static NSString *const kText = @"kText";
     BOOL paused = !_mediaplayer.isPlaying;
     if (paused) {
         [self jumpBackward];
-    } else if(![self isTopMenuOnScreen])
+    } else
     {
         [self scanForwardPrevious];
     }
@@ -549,7 +508,7 @@ static NSString *const kText = @"kText";
     BOOL paused = !_mediaplayer.isPlaying;
     if (paused) {
         [self jumpForward];
-    } else if(![self isTopMenuOnScreen]){
+    } else {
         [self scanForwardNext];
     }
 }
@@ -899,6 +858,34 @@ static const NSInteger VLCJumpInterval = 10000; // 10 seconds
     [self playbackPositionUpdated];
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #pragma mark - Change focus
 
 - (UIView *) preferredFocusedView
@@ -1239,7 +1226,7 @@ static const NSInteger VLCJumpInterval = 10000; // 10 seconds
     }
     [self updateActivityIndicatorForState:player.state];
     
-    
+            
 }// mediaPlayerStateChanged:
 
 
@@ -1247,6 +1234,7 @@ static const NSInteger VLCJumpInterval = 10000; // 10 seconds
 {
     self.indicatorView.hidden = YES;
     if(!self.indicatorView.isAnimating)[self.indicatorView startAnimating];
+    [self resumeSubtitleParseTimerIfNeeded];
     
     if (!_videoDidOpened) {
         
@@ -1322,6 +1310,7 @@ static const NSInteger VLCJumpInterval = 10000; // 10 seconds
 
 - (void) showOSD
 {
+    self.subtitlesBottomSpace.constant = 120.0;
     
     [UIView animateWithDuration:0.4 animations:^{
         self.osdView.alpha = 1.0;
@@ -1332,6 +1321,7 @@ static const NSInteger VLCJumpInterval = 10000; // 10 seconds
 
 - (void) hideOSD
 {
+    self.subtitlesBottomSpace.constant = 72.0;
     
     [self hideSwipeMessage];
     
@@ -1520,33 +1510,21 @@ static const NSInteger VLCJumpInterval = 10000; // 10 seconds
 
 - (void) restoreSub
 {
-    CFArrayRef subarray =  MACaptionAppearanceCopySelectedLanguages(kMACaptionAppearanceDomainDefault);
     NSString *currentSubs = [[NSUserDefaults standardUserDefaults] valueForKey:@"currentSubs"];
-    if ((!currentSubs || [currentSubs isEqual:@"off"]) && CFArrayGetCount(subarray)<=0) {
+    if (!currentSubs || [currentSubs isEqual:@"off"]) {
         return;
     }
     
-    NSLocale *locale = [NSLocale localeWithLocaleIdentifier:@"en_US"];
-    NSString* subname = [locale displayNameForKey:NSLocaleIdentifier value:CFArrayGetValueAtIndex(subarray, 0)].lowercaseString;
     for (Subtitle *sub in _subsTracks) {
         
         NSString *name = [[sub language] lowercaseString];
-        if (currentSubs==nil){
-            if ([name isEqual:subname]) {
-                NSUInteger row = [_subsTracks indexOfObject:sub];
-                _lastIndexPathSubtitle = [NSIndexPath indexPathForRow:row inSection:0];
-                [self newSubSelected];
-                return;
-            }
-        }else{
-            if ([name isEqual:currentSubs]) {
-                NSUInteger row = [_subsTracks indexOfObject:sub];
-                _lastIndexPathSubtitle = [NSIndexPath indexPathForRow:row inSection:0];
-                [self newSubSelected];
-                return;
-            }
+        
+        if ([name isEqual:currentSubs]) {
+            NSUInteger row = [_subsTracks indexOfObject:sub];
+            _lastIndexPathSubtitle = [NSIndexPath indexPathForRow:row inSection:0];
+            [self newSubSelected];
+            return;
         }
-            
     }
     
 }
@@ -1558,15 +1536,25 @@ static const NSInteger VLCJumpInterval = 10000; // 10 seconds
     
     if (lastSelected.index) {
         [_mediaplayer setCurrentVideoSubTitleIndex:lastSelected.index.intValue];
+        self.subtitleTextView.hidden = YES;
+        [self stopSubtitleParseTimer];
     } else {
         [_mediaplayer setCurrentVideoSubTitleIndex:-1];
+        
         NSString *file = lastSelected.filePath;
         if (file) {
-            [_mediaplayer addPlaybackSlave:[NSURL fileURLWithPath:file] type:VLCMediaPlaybackSlaveTypeSubtitle enforce:YES];
+            NSString *string = [self readSubtitleAtPath:file withEncoding:lastSelected.encoding];
+            NSError *error;
+            SRTParser *parser = [[SRTParser alloc] init];
+            _currentSelectedSub = [parser parseString:string error:&error];
         } else {
             if (lastSelected.fileAddress) {
                 [lastSelected downloadSubtitle:^(NSString * _Nullable filePath) {
-                    [_mediaplayer addPlaybackSlave:[NSURL fileURLWithPath:filePath] type:VLCMediaPlaybackSlaveTypeSubtitle enforce:YES];
+                    NSString *string = [self readSubtitleAtPath:filePath withEncoding:lastSelected.encoding];
+                    NSError *error;
+                    lastSelected.filePath = filePath;
+                    SRTParser *parser = [[SRTParser alloc] init];
+                    _currentSelectedSub = [parser parseString:string error:&error];
                 }];
             }
         }
@@ -1730,6 +1718,80 @@ static const NSInteger VLCJumpInterval = 10000; // 10 seconds
 
 #pragma mark - Subtitles text
 
+- (void) stopSubtitleParseTimer
+{
+    if (_subtitleTimer.isValid) {
+        [_subtitleTimer invalidate];
+    }
+    
+}// stopSubtitleParseTimer:
+
+
+- (void) resumeSubtitleParseTimerIfNeeded
+{
+    if (!_subtitleTimer.isValid && (_lastIndexPathSubtitle.row > 0 && _lastIndexPathSubtitle.row < [_subsTracks count] - [_subsTrackIndexes count])) {
+        [_subtitleTimer invalidate];
+        _subtitleTimer = nil;
+        _subtitleTimer = [NSTimer timerWithTimeInterval:0.5
+                                                 target:self
+                                               selector:@selector(searchAndShowSubtitle)
+                                               userInfo:nil
+                                                repeats:YES];
+        [[NSRunLoop currentRunLoop] addTimer:_subtitleTimer forMode:NSDefaultRunLoopMode];
+    }
+    
+}// resumeSubtitleParseTimerIfNeeded
+
+
+- (void) searchAndShowSubtitle
+{
+    float currentSeconds = [self currentTimeSeconds] - _offsetFloat;
+    
+    // Search for timeInterval
+    NSPredicate *initialPredicate = [NSPredicate predicateWithFormat:@"(%@ >= SELF.startTime) AND (%@ <= SELF.endTime)", @(currentSeconds), @(currentSeconds)];
+    NSArray *objectsFound = [_currentSelectedSub filteredArrayUsingPredicate:initialPredicate];
+    SRTSubtitle *lastFounded = (SRTSubtitle *)[objectsFound lastObject];
+    
+    if (lastFounded) {
+        if ([lastFounded.content.lowercaseString containsString:@"opensubtitles"]) {
+            return;
+        }
+        [self updateSubtitle:lastFounded.content];
+        
+        CGRect rectBack = [lastFounded.content boundingRectWithSize:CGSizeMake(1920, 1080)
+                                                            options:NSStringDrawingUsesLineFragmentOrigin
+                                                         attributes:[subSetting attributes]
+                                                            context:nil];
+        
+        
+        if (subSetting.backgroundType == SQSubSettingBackgroundBlur) {
+            self.widthSubtitleConstraint.constant  = rectBack.size.width + 140;
+            self.heightSubtitleConstraint.constant = rectBack.size.height + 34;
+            self.backSubtitle.hidden = NO;
+        }
+        else if (subSetting.backgroundType == SQSubSettingBackgroundNone) {
+            self.backSubtitle.hidden = YES;
+            self.backSubtitleView.hidden = YES;
+        }
+        else {
+            self.widthSubtitleViewConstraint.constant  = rectBack.size.width + 140;
+            self.heightSubtitleViewConstraint.constant = rectBack.size.height + 34;
+            self.backSubtitleView.hidden = NO;
+        }
+        
+        self.heightSubtitleTextConstraint.constant = rectBack.size.height + 34;
+        [self.view layoutIfNeeded];
+        
+        self.subtitleTextView.hidden = NO;
+        
+    } else {
+        self.subtitleTextView.hidden = YES;
+        self.backSubtitle.hidden = YES;
+        self.backSubtitleView.hidden = YES;
+    }
+    
+}// searchAndShowSubtitle
+
 
 - (float) currentTimeSeconds
 {
@@ -1737,6 +1799,28 @@ static const NSInteger VLCJumpInterval = 10000; // 10 seconds
     return timevlc * 0.001;
 }
 
+
+- (void) updateSubtitle:(NSString *) string
+{
+    /*
+     NSShadow *shadow = [[NSShadow alloc]init];
+     shadow.shadowOffset = CGSizeMake(.0, 1.0);
+     shadow.shadowBlurRadius = 5.0;
+     shadow.shadowColor = [UIColor blackColor];
+     
+     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle defaultParagraphStyle] mutableCopy];
+     paragraphStyle.alignment = NSTextAlignmentCenter;
+     paragraphStyle.lineSpacing = 1.6;
+     
+     NSMutableAttributedString *attr = [[NSMutableAttributedString alloc]initWithString:string];
+     [attr addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:_sizeFloat weight:UIFontWeightMedium] range:NSMakeRange(0, string.length)];
+     [attr addAttribute:NSForegroundColorAttributeName value:[UIColor whiteColor] range:NSMakeRange(0, string.length)];
+     [attr addAttribute:NSShadowAttributeName value:shadow range:NSMakeRange(0, string.length)];
+     [attr addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, string.length)];
+     */
+    
+    self.subtitleTextView.attributedText = [[NSAttributedString alloc]initWithString:string attributes:[subSetting attributes]];
+}
 
 
 #pragma mark - Time Custom Methods

@@ -69,6 +69,48 @@ class KATSearchRecipe: SearchRecipe {
     }
 
 }
+class CorsaroSearchRecipe: SearchRecipe {
+    private var currentSearchText=""
+    private var category = "movies"
+    
+    //[todo] category is not needed
+    init(type: PresentationType = .Search, category: String) {
+        super.init(type: type)
+        self.category = category
+    }
+    
+    override func filterSearchText(text: String, callback: (String -> Void)) {
+        currentSearchText=text.stringByReplacingOccurrencesOfString("#", withString: "")
+
+        if (text.characters.contains("#")){
+            let temp_str: String = currentSearchText.stringByReplacingOccurrencesOfString(" ", withString: "%20")
+            NetworkManager.sharedManager().fetchCorsaroSearch(temp_str){
+                movies, error in
+                if let movies = movies{
+                    let mapped: [String] = movies.map{ movie in
+                        return movie.lockUp
+                    }
+                    if let file = NSBundle.mainBundle().URLForResource("CorsaroSearchRecipe", withExtension: "xml") {
+                        do {
+                            var xml = try String(contentsOfURL: file)
+                            
+                            xml = xml.stringByReplacingOccurrencesOfString("{{TITLE}}", withString: "Found \(movies.count) \(movies.count == 1 ? "movie" : "movies") for \(self.currentSearchText)")
+                            xml = xml.stringByReplacingOccurrencesOfString("{{RESULTS}}", withString: mapped.joinWithSeparator("\n"))
+                            callback(xml)
+                        } catch {
+                            print("Could not open Catalog template")
+                        }
+                    }
+                }
+                
+            }
+
+        }
+        
+    }
+    
+}
+
 
 
 class EZTVSearchRecipe: SearchRecipe {

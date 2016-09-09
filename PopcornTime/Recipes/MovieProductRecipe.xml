@@ -15,11 +15,6 @@
     <banner>
         <infoList>
             <info>
-                <ratingCard style="tv-align: right;">
-                    <ratingBadge style="tv-rating-style: star-hollow-l;" value="0.{{STAR_RATING}}"></ratingBadge>
-                </ratingCard>
-            </info>
-            <info>
                 <header>
                     <title>Genre</title>
                 </header>
@@ -47,6 +42,8 @@
                 <badge src="resource://mpaa-{{RATING}}" class="badge" />
                 <badge src="resource://hd" class="badge" />
                 <badge src="resource://cc" class="badge" />
+                <ratingBadge value="0.{{STAR_RATING}}">
+                </ratingBadge>
 
                 {{AIR_DATE_TIME}}
             </row>

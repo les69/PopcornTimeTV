@@ -70,7 +70,7 @@ class ServiceProvider: NSObject, TVTopShelfProvider {
                                     )
                                 }
                               
-                                let popularShowsSectionTitle = "Top Shows"
+                                let popularShowsSectionTitle = "Popular Shows"
                                 let popularShowSectionItem = TVContentItem(contentIdentifier: TVContentIdentifier(identifier: popularShowsSectionTitle, container: nil)!)
                                 popularShowSectionItem!.title = popularShowsSectionTitle
                                 popularShowSectionItem!.topShelfItems = showItems
